@@ -34,9 +34,10 @@ export const TaskCard = ({
   const onClick = () => {
     router.push(`?taskId=${id}`);
 
-    if (navigator) {
-      navigator.vibrate(5 * 60 * 1000);
-    }
+    const voices = speechSynthesis.getVoices();
+    const utterance = new SpeechSynthesisUtterance('Пошел нахуй пидорас');
+    utterance.voice = voices.find((voice) => voice.lang === 'ru-RU') || null;
+    speechSynthesis.speak(utterance);
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
