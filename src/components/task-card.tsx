@@ -33,6 +33,10 @@ export const TaskCard = ({
 
   const onClick = () => {
     router.push(`?taskId=${id}`);
+
+    if (navigator) {
+      navigator.vibrate(5 * 60 * 1000);
+    }
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
