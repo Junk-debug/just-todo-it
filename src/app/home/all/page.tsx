@@ -22,7 +22,20 @@ const GyroscopeCard: React.FC = () => {
       setInt(event.interval);
     };
 
-    window.addEventListener('devicemotion', handleMotionEvent);
+    if (
+      'requestPermission' in DeviceMotionEvent &&
+      typeof DeviceMotionEvent.requestPermission === 'function'
+    ) {
+      DeviceMotionEvent.requestPermission()
+        .then((permissionState: 'granted' | unknown) => {
+          if (permissionState === 'granted') {
+            window.addEventListener('devicemotion', handleMotionEvent);
+          }
+        })
+        .catch(console.error);
+    } else {
+      window.addEventListener('devicemotion', handleMotionEvent);
+    }
 
     return () => {
       window.removeEventListener('devicemotion', handleMotionEvent);
