@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 const GyroscopeCard: React.FC = () => {
   const [acceleration, setAcceleration] = useState<{
@@ -26,8 +27,10 @@ const GyroscopeCard: React.FC = () => {
       'requestPermission' in DeviceMotionEvent &&
       typeof DeviceMotionEvent.requestPermission === 'function'
     ) {
+      toast.success('method exists');
       DeviceMotionEvent.requestPermission()
         .then((permissionState: 'granted' | unknown) => {
+          toast.success('permission' + permissionState);
           if (permissionState === 'granted') {
             window.addEventListener('devicemotion', handleMotionEvent);
           }
