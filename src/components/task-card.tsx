@@ -9,12 +9,19 @@ import { cn, formatDate } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
 import useUpdateTaskMutation from '@/hooks/useUpdateTaskMutation';
+import { useEffect } from 'react';
 
 export type TaskCardProps = React.HTMLAttributes<HTMLDivElement> & {
   task: Task;
   showDueDate?: boolean;
   ref?: React.Ref<HTMLDivElement>;
 };
+
+const voices = speechSynthesis.getVoices();
+const utterance = new SpeechSynthesisUtterance('Пошел нахуй, пидорас');
+utterance.voice = voices.find((voice) => voice.lang === 'ru-RU') || null;
+utterance.lang = 'ru-RU';
+utterance.volume = 2;
 
 export const TaskCard = ({
   task: { id, title, description, completed, dueDate },
@@ -27,17 +34,16 @@ export const TaskCard = ({
 
   const { mutate } = useUpdateTaskMutation();
 
+  useEffect(() => {
+    speechSynthesis.speak(utterance);
+  }, []);
+
   const onCheckedChange = async (value: boolean) => {
     mutate({ id, completed: value });
   };
 
   const onClick = () => {
     router.push(`?taskId=${id}`);
-
-    const voices = speechSynthesis.getVoices();
-    const utterance = new SpeechSynthesisUtterance('Пошел нахуй пидорас');
-    utterance.voice = voices.find((voice) => voice.lang === 'ru-RU') || null;
-    speechSynthesis.speak(utterance);
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
