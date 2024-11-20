@@ -17,12 +17,6 @@ export type TaskCardProps = React.HTMLAttributes<HTMLDivElement> & {
   ref?: React.Ref<HTMLDivElement>;
 };
 
-const voices = speechSynthesis.getVoices();
-const utterance = new SpeechSynthesisUtterance('Пошел нахуй, пидорас');
-utterance.voice = voices.find((voice) => voice.lang === 'ru-RU') || null;
-utterance.lang = 'ru-RU';
-utterance.volume = 2;
-
 export const TaskCard = ({
   task: { id, title, description, completed, dueDate },
   showDueDate = true,
@@ -35,7 +29,14 @@ export const TaskCard = ({
   const { mutate } = useUpdateTaskMutation();
 
   useEffect(() => {
-    speechSynthesis.speak(utterance);
+    if (speechSynthesis) {
+      const voices = speechSynthesis.getVoices();
+      const utterance = new SpeechSynthesisUtterance('Пошел нахуй, пидорас');
+      utterance.voice = voices.find((voice) => voice.lang === 'ru-RU') || null;
+      utterance.lang = 'ru-RU';
+      utterance.volume = 2;
+      speechSynthesis.speak(utterance);
+    }
   }, []);
 
   const onCheckedChange = async (value: boolean) => {
