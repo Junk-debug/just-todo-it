@@ -3,16 +3,23 @@
 import { useEffect, useState } from 'react';
 
 const GyroscopeCard: React.FC = () => {
-  const [transformZ, setTransformZ] = useState<number>(0);
+  const [acceleration, setAcceleration] = useState<{
+    x: number | null;
+    y: number | null;
+    z: number | null;
+  } | null>(null);
+  const [rotationRate, setRotationRate] = useState<{
+    alpha: number | null;
+    beta: number | null;
+    gamma: number | null;
+  } | null>(null);
+  const [int, setInt] = useState(0);
 
   useEffect(() => {
     const handleMotionEvent = (event: DeviceMotionEvent) => {
-      const alpha = event.rotationRate?.alpha;
-      if (alpha != null) {
-        // Ограничиваем значение alpha
-        const clampedZ = Math.min(Math.max(alpha, -50), 50);
-        setTransformZ(clampedZ);
-      }
+      setAcceleration(event.acceleration);
+      setRotationRate(event.rotationRate);
+      setInt(event.interval);
     };
 
     window.addEventListener('devicemotion', handleMotionEvent);
@@ -23,14 +30,17 @@ const GyroscopeCard: React.FC = () => {
   }, []);
 
   return (
-    <div
-      className="w-48 h-48 bg-green-500 text-white rounded-lg shadow-md flex items-center justify-center"
-      style={{
-        transform: `perspective(500px) translateZ(${transformZ}px)`,
-        transition: 'transform 0.1s ease-out',
-      }}
-    >
-      Card
+    <div className="w-48 h-48 [perspective:1000px]">
+      <div className="w-full h-full bg-green-500 text-white rounded-lg shadow-md flex items-center justify-center [transform-style:preserve-3d] [transform:rotateY(45deg)]">
+        Card
+        <br />
+        acceleration: {acceleration?.x} {acceleration?.y} {acceleration?.z}
+        <br />
+        interval: {int}
+        <br />
+        rotationRate: {rotationRate?.alpha} {rotationRate?.beta}{' '}
+        {rotationRate?.gamma}
+      </div>
     </div>
   );
 };
