@@ -29,40 +29,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import useUserQuery from '@/hooks/use-user-query';
 import { AddTaskFlow } from '@/components/add-task-flow';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { usePathname } from 'next/navigation';
 
 const Content = () => {
   const { newAssignmentsCount, isLoading } = useAssignments();
+  const pathname = usePathname();
+
   return (
     <SidebarContent>
-      <SidebarGroup>
-        <SidebarGroupLabel>Application</SidebarGroupLabel>
-        <SidebarGroupContent>
-          <SidebarMenu>
-            {routes.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild>
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      isLoading &&
-                        item.href === '/home/inbox' &&
-                        'animate-pulse',
-                    )}
-                  >
-                    <item.icon />
-                    <span>{item.title}</span>
-                    {item.href === '/home/inbox' && (
-                      <SidebarMenuBadge>
-                        {newAssignmentsCount || ''}
-                      </SidebarMenuBadge>
-                    )}
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
       <SidebarGroup>
         <SidebarGroupLabel>Tasks</SidebarGroupLabel>
 
@@ -82,7 +56,13 @@ const Content = () => {
               )
               .map((item) => (
                 <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton
+                    className={cn(
+                      item.href === pathname &&
+                        'bg-sidebar-accent text-sidebar-accent-foreground font-medium',
+                    )}
+                    asChild
+                  >
                     <Link href={item.href}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -98,6 +78,45 @@ const Content = () => {
                 </SidebarMenuButton>
               }
             />
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
+      <SidebarGroup>
+        <SidebarGroupLabel>Application</SidebarGroupLabel>
+        <SidebarGroupContent>
+          <SidebarMenu>
+            {routes
+              .filter((route) =>
+                ['/home/profile', '/home/inbox'].includes(route.href),
+              )
+              .map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    className={cn(
+                      item.href === pathname &&
+                        'bg-sidebar-accent text-sidebar-accent-foreground font-medium',
+                    )}
+                    asChild
+                  >
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        isLoading &&
+                          item.href === '/home/inbox' &&
+                          'animate-pulse',
+                      )}
+                    >
+                      <item.icon />
+                      <span>{item.title}</span>
+                      {item.href === '/home/inbox' && (
+                        <SidebarMenuBadge>
+                          {newAssignmentsCount || ''}
+                        </SidebarMenuBadge>
+                      )}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
