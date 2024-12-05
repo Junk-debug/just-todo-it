@@ -1,6 +1,6 @@
 import { verifyUser } from '@/actions/auth/controller';
 
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import {
   Card,
   CardHeader,
@@ -9,6 +9,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { createServerActionHandler } from '@/lib/safe-action';
+import { cn } from '@/lib/utils';
 
 import Link from 'next/link';
 
@@ -49,14 +50,9 @@ export default async function VerificationPage({
         </CardContent>
         <CardFooter className="flex justify-center">
           {verified && (
-            <Button asChild>
-              <Link
-                href={'/auth/login'}
-                className="bg-primary text-white text-sm font-medium hover:bg-primary/90 h-10 px-4 py-2 rounded-lg w-full text-center"
-              >
-                Sign in
-              </Link>
-            </Button>
+            <Link className={cn(buttonVariants())} href={'/auth/login'}>
+              Sign in
+            </Link>
           )}
         </CardFooter>
       </Card>

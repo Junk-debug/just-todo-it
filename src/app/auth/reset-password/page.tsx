@@ -1,7 +1,8 @@
 import ChangePasswordForm from './reset-password-form';
 import { CircleAlert } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
@@ -18,9 +19,9 @@ export default async function ResetPasswordPage({
         <span className="flex items-center gap-2 mb-4">
           <CircleAlert /> There is no token in this url
         </span>
-        <Button asChild>
-          <Link href={'/auth/login'}>Back to sign in</Link>
-        </Button>
+        <Link className={cn(buttonVariants())} href={'/auth/login'}>
+          Back to sign in
+        </Link>
       </>
     );
   }

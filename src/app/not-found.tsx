@@ -1,4 +1,5 @@
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
 export default function NotFound() {
@@ -14,9 +15,10 @@ export default function NotFound() {
         <p className="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8">
           We couldn&apos;t find the page you&apos;re looking for.
         </p>
-        <Button asChild variant="outline">
-          <Link href="/">Go back home</Link>
-        </Button>
+
+        <Link className={cn(buttonVariants({ variant: 'outline' }))} href="/">
+          Go back home
+        </Link>
       </div>
     </div>
   );

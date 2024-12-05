@@ -1,4 +1,5 @@
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
 export default function HomePage() {
@@ -12,9 +13,10 @@ export default function HomePage() {
           Our Todo app helps you organize, prioritize, and accomplish your tasks
           with ease. Stay productive and achieve your goals.
         </p>
-        <Button size={'lg'} asChild>
-          <Link href="/home">Get started</Link>
-        </Button>
+
+        <Link className={cn(buttonVariants({ size: 'lg' }))} href="/home">
+          Get started
+        </Link>
       </div>
     </main>
   );
