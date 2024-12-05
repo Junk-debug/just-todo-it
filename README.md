@@ -1,4 +1,8 @@
-# Next Todo App Documentation
+# Just todo it
+
+**Just todo it** is a simple todo web application that allows users to easily keep track of their daily tasks. The app features a clean and minimalistic UI, with a simple and intuitive user experience. Users can create, read, update, and delete (CRUD) tasks, as well as share tasks with others, fostering collaboration and teamwork. Additionally, the app includes user authentication and authorization, ensuring that users can only view and share their own tasks with authorized individuals. The app is designed to be as simple as possible, with no extraneous features or distractions, making it perfect for users who want a straightforward,easy-to-use todo list app.
+
+## Documentation
 
 ## Table of Contents
 
@@ -133,6 +137,7 @@ The project is built using the following technologies:
 - [**Tailwind CSS**](https://tailwindcss.com/): Utility-first CSS framework for styling.
 - [**shadcn/ui**](https://ui.shadcn.com/): Beautifully designed components that you can copy and paste into your apps. Accessible. Customizable. Open Source.
 - [**Lucide Icons**](https://lucide.dev/): Icon library for SVG icons.
+- [**Framer Motion**](https://www.framer.com/motion/): A production-ready motion library for React, used for creating animations and transitions.
 
 ### Backend
 
