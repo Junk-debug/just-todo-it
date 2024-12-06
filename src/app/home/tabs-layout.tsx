@@ -53,7 +53,7 @@ export default function TabsLayout({
     <Tabs asChild value={pathname} className="h-full">
       <div className="!h-dvh w-full flex flex-col">
         {children}
-        <TabsList className="flex w-full justify-evenly fixed bottom-0 md:hidden py-2 rounded-none pb-[calc(env(safe-area-inset-bottom)+0.5rem)]">
+        <TabsList className="flex w-full justify-evenly fixed bottom-0 md:hidden py-2 min-h-[4.25rem] rounded-none pb-[calc(env(safe-area-inset-bottom)+0.5rem)]">
           {routes.map(({ icon: Icon, title, href }) => (
             <TabsTrigger
               className="data-[state=active]:!text-primary min-w-[4.625rem] flex flex-col gap-1 items-center text-xs"
