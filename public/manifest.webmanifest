@@ -1,6 +1,7 @@
 {
-  "name": "MyWebSite",
-  "short_name": "MySite",
+  "name": "Just todo it",
+  "short_name": "Just todo it",
+  "description": "A simple and efficient todo application that helps you manage your tasks effortlessly.",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -15,7 +16,8 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
-  "display": "standalone"
+  "start_url": "/home",
+  "background_color": "#0C0A09",
+  "display": "standalone",
+  "orientation": "portrait"
 }
