@@ -131,7 +131,7 @@ export default function AllPage() {
           trigger={
             <Button
               size={'icon'}
-              className="fixed bottom-20 right-8 gap-1 size-12 rounded-lg"
+              className="fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] right-8 gap-1 size-12 rounded-lg"
             >
               <Plus className="!size-7" />
             </Button>
