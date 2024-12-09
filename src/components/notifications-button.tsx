@@ -1,12 +1,12 @@
 'use client';
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import {
   subscribeUser,
   unsubscribeUser,
 } from '@/actions/notification/controller';
 import { Button } from '@/components/ui/button';
 import { Bell, BellOff } from 'lucide-react';
+import { toast } from 'sonner';
 
 const urlBase64ToUint8Array = (base64String: string) => {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
@@ -21,7 +21,7 @@ const urlBase64ToUint8Array = (base64String: string) => {
   return outputArray;
 };
 
-export function PushNotificationManager() {
+function PushNotificationManager() {
   // const { data: registration } = useQuery({
   //   queryKey: [QueryKey.PUSH, QueryKey.REGISTRATION],
   //   queryFn: async () => {
@@ -74,6 +74,8 @@ export function PushNotificationManager() {
       await subscription?.unsubscribe();
       await unsubscribeUser(subscription?.endpoint || '');
       setSubscription(null);
+
+      toast.info('Unsubscribed from push notifications');
     } else {
       const registration = await navigator.serviceWorker.ready;
       const sub = await registration.pushManager.subscribe({
@@ -87,6 +89,8 @@ export function PushNotificationManager() {
       console.log(sub.toJSON());
 
       await subscribeUser(sub.toJSON());
+
+      toast.info('Subscribed to push notifications');
     }
   };
 
@@ -104,6 +108,8 @@ export function PushNotificationManager() {
     return null;
   }
 
+  console.log(subscription);
+
   return (
     <>
       <Button size={'icon'} onClick={toggleSubscribe}>
@@ -112,6 +118,8 @@ export function PushNotificationManager() {
     </>
   );
 }
+
+export const NotificationsButton = memo(PushNotificationManager);
 
 // export function InstallPrompt() {
 //   const [isIOS, setIsIOS] = useState(false);

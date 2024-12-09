@@ -31,7 +31,7 @@ import { useLogout } from '@/hooks/use-logout';
 import { Skeleton } from '@/components/ui/skeleton';
 import useUserQuery from '@/hooks/use-user-query';
 import { AddTaskFlow } from '@/components/add-task-flow';
-import { PushNotificationManager } from '@/components/notifications-button';
+import { NotificationsButton } from '@/components/notifications-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { usePathname } from 'next/navigation';
 
@@ -125,7 +125,7 @@ const Content = () => {
         </SidebarGroupContent>
       </SidebarGroup>
       <SidebarGroup>
-        <PushNotificationManager />
+        <NotificationsButton />
       </SidebarGroup>
     </SidebarContent>
   );
