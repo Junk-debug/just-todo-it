@@ -1,6 +1,6 @@
 import { NormalizedUser, updateUser } from '@/actions/user/controller';
 import { UpdateUserDto } from '@/actions/user/types';
-import { QueryKeys } from '@/lib/query-keys';
+import { QueryKey } from '@/lib/query-key';
 import {
   useMutation,
   UseMutationOptions,
@@ -25,7 +25,7 @@ export default function useUpdateUser({ onSettled, ...options }: Options = {}) {
   >({
     mutationFn: updateUser,
     onSettled: (data, error, vars, ctx) => {
-      queryClient.refetchQueries({ queryKey: [QueryKeys.USER] });
+      queryClient.refetchQueries({ queryKey: [QueryKey.USER] });
       onSettled?.(data, error, vars, ctx);
     },
     ...options,

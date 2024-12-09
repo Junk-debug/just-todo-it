@@ -1,10 +1,10 @@
 import { getAcceptedDetailedTasks } from '@/actions/task/controller';
-import { QueryKeys } from '@/lib/query-keys';
+import { QueryKey } from '@/lib/query-key';
 import { useQuery } from '@tanstack/react-query';
 
 export default function useTasksQuery() {
   return useQuery({
     queryFn: getAcceptedDetailedTasks,
-    queryKey: [QueryKeys.TASKS],
+    queryKey: [QueryKey.TASKS],
   });
 }

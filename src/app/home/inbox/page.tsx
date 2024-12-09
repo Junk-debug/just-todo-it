@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import useUpdateAssignmentAcceptedStatusMutation from '@/hooks/useUpdateAssignmentAcceptedStatusMutation';
 import { DetailedAssignment } from '@/actions/assignment/service';
 import { Skeleton } from '@/components/ui/skeleton';
-import { QueryKeys } from '@/lib/query-keys';
+import { QueryKey } from '@/lib/query-key';
 
 const AssignmentsList = ({
   assignments,
@@ -47,7 +47,7 @@ const AssignmentsList = ({
 export default function InboxPage() {
   const { data, isLoading, error } = useQuery({
     queryFn: getDetailedNonOwnerAssignments,
-    queryKey: [QueryKeys.ASSIGNMENTS],
+    queryKey: [QueryKey.ASSIGNMENTS],
   });
 
   const { mutate } = useUpdateAssignmentAcceptedStatusMutation({

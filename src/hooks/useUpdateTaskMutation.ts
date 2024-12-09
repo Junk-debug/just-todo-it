@@ -1,6 +1,6 @@
 import { updateTask } from '@/actions/task/controller';
 import { UpdateTaskDto } from '@/actions/task/types';
-import { QueryKeys } from '@/lib/query-keys';
+import { QueryKey } from '@/lib/query-key';
 import { createServerActionHandler } from '@/lib/safe-action';
 import { Task } from '@prisma/client';
 import {
@@ -33,19 +33,19 @@ export default function useUpdateTaskMutation({
   const mutation = useMutation<Task, Error, UpdateTaskDto, TContext>({
     mutationFn: createServerActionHandler(updateTask),
     onMutate: async (newTask) => {
-      await queryClient.cancelQueries({ queryKey: [QueryKeys.TASKS] });
+      await queryClient.cancelQueries({ queryKey: [QueryKey.TASKS] });
       await queryClient.cancelQueries({
-        queryKey: [QueryKeys.TASKS, newTask.id],
+        queryKey: [QueryKey.TASKS, newTask.id],
       });
 
-      const previousTasks = queryClient.getQueryData<Task[]>([QueryKeys.TASKS]);
+      const previousTasks = queryClient.getQueryData<Task[]>([QueryKey.TASKS]);
       const previousTask = queryClient.getQueryData<Task>([
-        QueryKeys.TASKS,
+        QueryKey.TASKS,
         newTask.id,
       ]);
 
       queryClient.setQueryData<Task>(
-        [QueryKeys.TASKS, newTask.id],
+        [QueryKey.TASKS, newTask.id],
         (oldTask) => {
           if (!oldTask) {
             return oldTask;
@@ -55,7 +55,7 @@ export default function useUpdateTaskMutation({
         },
       );
 
-      queryClient.setQueryData<Task[]>([QueryKeys.TASKS], (oldTasks) => {
+      queryClient.setQueryData<Task[]>([QueryKey.TASKS], (oldTasks) => {
         if (!oldTasks) {
           return oldTasks;
         }
@@ -73,12 +73,12 @@ export default function useUpdateTaskMutation({
     },
     onError: (error, variables, context) => {
       if (context?.previousTasks) {
-        queryClient.setQueryData([QueryKeys.TASKS], context.previousTasks);
+        queryClient.setQueryData([QueryKey.TASKS], context.previousTasks);
       }
 
       if (context?.previousTask) {
         queryClient.setQueryData(
-          [QueryKeys.TASKS, context.previousTask.id],
+          [QueryKey.TASKS, context.previousTask.id],
           context.previousTask,
         );
       }
@@ -90,9 +90,9 @@ export default function useUpdateTaskMutation({
       }
     },
     onSettled: (data, error, variables, context) => {
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.TASKS] });
+      queryClient.invalidateQueries({ queryKey: [QueryKey.TASKS] });
       queryClient.invalidateQueries({
-        queryKey: [QueryKeys.TASKS, variables.id],
+        queryKey: [QueryKey.TASKS, variables.id],
       });
 
       if (onSettled) {

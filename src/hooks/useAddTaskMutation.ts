@@ -1,6 +1,6 @@
 import { addTask } from '@/actions/task/controller';
 import { AddTaskDto } from '@/actions/task/types';
-import { QueryKeys } from '@/lib/query-keys';
+import { QueryKey } from '@/lib/query-key';
 import { createServerActionHandler } from '@/lib/safe-action';
 import { Task } from '@prisma/client';
 import {
@@ -36,12 +36,12 @@ export default function useAddTaskMutation({
   const mutation = useMutation<Task, Error, Dto, TContext>({
     mutationFn: createServerActionHandler(addTask),
     onMutate: async (newTask) => {
-      await queryClient.cancelQueries({ queryKey: [QueryKeys.TASKS] });
+      await queryClient.cancelQueries({ queryKey: [QueryKey.TASKS] });
 
-      const previousTasks = queryClient.getQueryData<Task[]>([QueryKeys.TASKS]);
-      queryClient.setQueryData<Task>([QueryKeys.TASKS, newTask.id], newTask);
+      const previousTasks = queryClient.getQueryData<Task[]>([QueryKey.TASKS]);
+      queryClient.setQueryData<Task>([QueryKey.TASKS, newTask.id], newTask);
 
-      queryClient.setQueryData<Task[]>([QueryKeys.TASKS], (oldTasks) => {
+      queryClient.setQueryData<Task[]>([QueryKey.TASKS], (oldTasks) => {
         if (!oldTasks) {
           return oldTasks;
         }
@@ -57,7 +57,7 @@ export default function useAddTaskMutation({
     },
     onError: (error, variables, context) => {
       if (context?.previousTasks) {
-        queryClient.setQueryData([QueryKeys.TASKS], context.previousTasks);
+        queryClient.setQueryData([QueryKey.TASKS], context.previousTasks);
       }
 
       toast.error(error.message);
@@ -74,7 +74,7 @@ export default function useAddTaskMutation({
       }
     },
     onSettled: (data, error, variables, context) => {
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.TASKS] });
+      queryClient.invalidateQueries({ queryKey: [QueryKey.TASKS] });
 
       if (onSettled) {
         onSettled(data, error, variables, context);
