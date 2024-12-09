@@ -1,12 +1,13 @@
 'use client';
+
 import { useState, useEffect, memo } from 'react';
 import {
   subscribeUser,
   unsubscribeUser,
 } from '@/actions/notification/controller';
-import { Button } from '@/components/ui/button';
-import { Bell, BellOff } from 'lucide-react';
 import { toast } from 'sonner';
+import { Label } from './ui/label';
+import { Switch } from './ui/switch';
 
 const urlBase64ToUint8Array = (base64String: string) => {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
@@ -53,6 +54,8 @@ function PushNotificationManager() {
     null,
   );
 
+  const [isLoading, setIsLoading] = useState(false);
+
   async function registerServiceWorker() {
     const registration = await navigator.serviceWorker.register('/sw.js', {
       scope: '/',
@@ -70,6 +73,7 @@ function PushNotificationManager() {
   }, []);
 
   const toggleSubscribe = async () => {
+    setIsLoading(true);
     if (subscription) {
       await subscription?.unsubscribe();
       await unsubscribeUser(subscription?.endpoint || '');
@@ -92,17 +96,8 @@ function PushNotificationManager() {
 
       toast.info('Subscribed to push notifications');
     }
+    setIsLoading(false);
   };
-
-  // async function sendTestNotification() {
-  //   // if (subscription) {
-  //   await sendNotification({
-  //     userId: '6d0392c3-fbeb-4ac1-a46d-49fe8f98e40b',
-  //     message,
-  //   });
-  //   setMessage('');
-  //   // }
-  // }
 
   if (!isSupported) {
     return null;
@@ -111,51 +106,15 @@ function PushNotificationManager() {
   console.log(subscription);
 
   return (
-    <>
-      <Button size={'icon'} onClick={toggleSubscribe}>
-        {subscription ? <Bell /> : <BellOff />}
-      </Button>
-    </>
+    <Label className="flex items-center gap-1 w-full justify-between">
+      Push notifications
+      <Switch
+        disabled={isLoading}
+        checked={!!subscription}
+        onCheckedChange={() => toggleSubscribe()}
+      />
+    </Label>
   );
 }
 
 export const NotificationsButton = memo(PushNotificationManager);
-
-// export function InstallPrompt() {
-//   const [isIOS, setIsIOS] = useState(false);
-//   const [isStandalone, setIsStandalone] = useState(false);
-
-//   useEffect(() => {
-//     setIsIOS(
-//       /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream,
-//     );
-
-//     setIsStandalone(window.matchMedia('(display-mode: standalone)').matches);
-//   }, []);
-
-//   if (isStandalone) {
-//     return null; // Don't show install button if already installed
-//   }
-
-//   return (
-//     <div>
-//       <h3>Install App</h3>
-//       <button>Add to Home Screen</button>
-//       {isIOS && (
-//         <p>
-//           To install this app on your iOS device, tap the share button
-//           <span role="img" aria-label="share icon">
-//             {' '}
-//             ⎋{' '}
-//           </span>
-//           and then &quot;Add to Home Screen&quot;
-//           <span role="img" aria-label="plus icon">
-//             {' '}
-//             ➕{' '}
-//           </span>
-//           .
-//         </p>
-//       )}
-//     </div>
-//   );
-// }
