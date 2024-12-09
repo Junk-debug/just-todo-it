@@ -14,9 +14,12 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { routes } from './routes';
-import Link from 'next/link';
+
 import { useAssignments } from './tabs-layout';
+import Link from 'next/link';
+
 import { cn } from '@/lib/utils';
+
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -28,6 +31,7 @@ import { useLogout } from '@/hooks/use-logout';
 import { Skeleton } from '@/components/ui/skeleton';
 import useUserQuery from '@/hooks/use-user-query';
 import { AddTaskFlow } from '@/components/add-task-flow';
+import { PushNotificationManager } from '@/components/notifications-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { usePathname } from 'next/navigation';
 
@@ -119,6 +123,9 @@ const Content = () => {
               ))}
           </SidebarMenu>
         </SidebarGroupContent>
+      </SidebarGroup>
+      <SidebarGroup>
+        <PushNotificationManager />
       </SidebarGroup>
     </SidebarContent>
   );
