@@ -10,6 +10,7 @@ import {
 
 import { toast } from 'sonner';
 import { createServerActionHandler } from '@/lib/safe-action';
+import { QueryKeys } from '@/lib/query-keys';
 
 type TContext = {
   previousTasks: Task[] | undefined;
@@ -36,14 +37,17 @@ export default function useDeleteTaskMutation({
     mutationFn: createServerActionHandler(deleteTask),
     onMutate: async (data) => {
       const { id } = data;
-      await queryClient.cancelQueries({ queryKey: ['tasks'] });
-      await queryClient.cancelQueries({ queryKey: ['tasks', id] });
+      await queryClient.cancelQueries({ queryKey: [QueryKeys.TASKS] });
+      await queryClient.cancelQueries({ queryKey: [QueryKeys.TASKS, id] });
 
-      const previousTasks = queryClient.getQueryData<Task[]>(['tasks']);
-      const previousTask = queryClient.getQueryData<Task>(['tasks', id]);
+      const previousTasks = queryClient.getQueryData<Task[]>([QueryKeys.TASKS]);
+      const previousTask = queryClient.getQueryData<Task>([
+        QueryKeys.TASKS,
+        id,
+      ]);
 
-      queryClient.setQueryData<Task>(['tasks', id], undefined);
-      queryClient.setQueryData<Task[]>(['tasks'], (oldTasks) => {
+      queryClient.setQueryData<Task>([QueryKeys.TASKS, id], undefined);
+      queryClient.setQueryData<Task[]>([QueryKeys.TASKS], (oldTasks) => {
         if (!oldTasks) {
           return oldTasks;
         }
@@ -59,12 +63,12 @@ export default function useDeleteTaskMutation({
     },
     onError: (error, variables, context) => {
       if (context?.previousTasks) {
-        queryClient.setQueryData(['tasks'], context.previousTasks);
+        queryClient.setQueryData([QueryKeys.TASKS], context.previousTasks);
       }
 
       if (context?.previousTask) {
         queryClient.setQueryData(
-          ['tasks', context.previousTask.id],
+          [QueryKeys.TASKS, context.previousTask.id],
           context.previousTask,
         );
       }
@@ -83,8 +87,10 @@ export default function useDeleteTaskMutation({
       }
     },
     onSettled: (data, error, variables, context) => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['tasks', variables.id] });
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.TASKS] });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.TASKS, variables.id],
+      });
 
       if (onSettled) {
         onSettled(data, error, variables, context);
