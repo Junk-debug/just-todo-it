@@ -3,6 +3,7 @@ import UpdateProfileForm from '@/components/update-profile-form';
 import { getCurrentUser } from '@/actions/auth/controller';
 import { createServerActionHandler } from '@/lib/safe-action';
 import ProfileImage from './profile-image-select';
+import { NotificationsButton } from '@/components/notifications-button';
 
 const getUser = createServerActionHandler(getCurrentUser);
 
@@ -26,6 +27,8 @@ export default async function ProfilePage() {
         image={user?.image}
       />
       <UpdateProfileForm user={user} />
+
+      <NotificationsButton />
 
       <LogoutButton
         variant={'outline'}
