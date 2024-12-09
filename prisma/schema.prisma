@@ -19,6 +19,20 @@ enum TokenType {
   PASSWORD_RESET
 }
 
+model PushSubscription {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  endpoint String @db.VarChar(255)
+
+  auth   String
+  p256dh String @db.VarChar(255)
+
+  @@unique([userId, endpoint])
+  @@index([userId])
+}
+
 model Token {
   id       String    @id @default(uuid())
   isActive Boolean   @default(true)
@@ -40,11 +54,13 @@ model User {
   name     String
   password String?
 
-  tokens      Token[]
-  accounts    Account[]
-  assignments Assignment[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  tokens        Token[]
+  accounts      Account[]
+  assignments   Assignment[]
+  subscriptions PushSubscription[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Account {
