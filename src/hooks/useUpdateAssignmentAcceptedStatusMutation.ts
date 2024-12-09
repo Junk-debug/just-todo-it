@@ -3,6 +3,7 @@ import {
   updateAssignmentAcceptedStatus,
 } from '@/actions/assignment/controller';
 import { DetailedAssignment } from '@/actions/assignment/service';
+import { QueryKey } from '@/lib/query-key';
 import { createServerActionHandler } from '@/lib/safe-action';
 import {
   useQueryClient,
@@ -43,14 +44,14 @@ export default function useUpdateAssignmentAcceptedStatusMutation({
   >({
     mutationFn: createServerActionHandler(updateAssignmentAcceptedStatus),
     onMutate: async (newAssignmentData) => {
-      await queryClient.cancelQueries({ queryKey: ['assignments'] });
+      await queryClient.cancelQueries({ queryKey: [QueryKey.ASSIGNMENTS] });
 
       const previousAssignments = queryClient.getQueryData<
         DetailedAssignment[]
-      >(['assignments']);
+      >([QueryKey.ASSIGNMENTS]);
 
       queryClient.setQueryData<DetailedAssignment[]>(
-        ['assignments'],
+        [QueryKey.ASSIGNMENTS],
         (oldAssignments) => {
           if (!oldAssignments) {
             return oldAssignments;
@@ -73,7 +74,10 @@ export default function useUpdateAssignmentAcceptedStatusMutation({
 
     onError: (err, newAssignmentData, context) => {
       if (context?.previousAssignments) {
-        queryClient.setQueryData(['assignments'], context.previousAssignments);
+        queryClient.setQueryData(
+          [QueryKey.ASSIGNMENTS],
+          context.previousAssignments,
+        );
       }
 
       toast.error('Failed to update task');
@@ -84,8 +88,8 @@ export default function useUpdateAssignmentAcceptedStatusMutation({
     },
 
     onSettled: (data, error, variables, context) => {
-      queryClient.invalidateQueries({ queryKey: ['assignments'] });
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: [QueryKey.ASSIGNMENTS] });
+      queryClient.invalidateQueries({ queryKey: [QueryKey.TASKS] });
 
       if (onSettled) {
         onSettled(data, error, variables, context);

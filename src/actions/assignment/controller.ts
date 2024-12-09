@@ -5,29 +5,71 @@ import { assignmentService } from './service';
 import { userService } from '../user/service';
 import { requireAuth } from '../auth/middlewares';
 import { createServerAction, ServerActionError } from '@/lib/safe-action';
+import { sendNotification } from '../notification/controller';
+import prisma from '@/prisma-client';
 
 export const shareTask = createServerAction(
-  async ({
-    taskId,
-    role,
-    email,
-  }: {
-    taskId: Task['id'];
-    role: TaskRole;
-    email: User['email'];
-  }) => {
-    const user = await userService.getUserByEmail(email);
+  requireAuth(
+    async (
+      { session },
+      {
+        taskId,
+        role,
+        email,
+      }: {
+        taskId: Task['id'];
+        role: TaskRole;
+        email: User['email'];
+      },
+    ) => {
+      const ownerId = session.user.id;
+      const isOwner = await assignmentService.isUserOwner(ownerId, taskId);
 
-    if (!user) {
-      throw new ServerActionError('User not found.');
-    }
+      if (!isOwner) {
+        throw new ServerActionError('Unauthorized');
+      }
 
-    return assignmentService.createAssignment({
-      taskId,
-      role,
-      userId: user.id,
-    });
-  },
+      const owner = await userService.getUserById(ownerId);
+
+      if (!owner) {
+        throw new ServerActionError('Owner not found.');
+      }
+
+      const user = await userService.getUserByEmail(email);
+
+      if (!user) {
+        throw new ServerActionError('User not found.');
+      }
+
+      if (
+        await prisma.assignment.findUnique({
+          where: {
+            taskId_userId: {
+              taskId,
+              userId: user.id,
+            },
+          },
+        })
+      ) {
+        throw new ServerActionError('User already has this task.');
+      }
+
+      const assignment = assignmentService.createAssignment({
+        taskId,
+        role,
+        userId: user.id,
+      });
+
+      await sendNotification({
+        url: process.env.AUTH_URL + '/home/inbox',
+        userId: user.id,
+        title: 'You have a new task assignment',
+        message: `${owner.name} has shared a new task for you.`,
+      });
+
+      return assignment;
+    },
+  ),
 );
 
 export const getNewNonOwnerAssignmentsCount = requireAuth(

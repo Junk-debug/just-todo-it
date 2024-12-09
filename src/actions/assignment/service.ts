@@ -134,6 +134,17 @@ function updateAssignment(id: string, data: UpdateAssignmentDto) {
   });
 }
 
+async function isUserOwner(userId: User['id'], taskId: Task['id']) {
+  const assignment = await prisma.assignment.findFirst({
+    where: {
+      userId,
+      taskId,
+      role: TaskRole.OWNER,
+    },
+  });
+  return !!assignment;
+}
+
 export const assignmentService = {
   createAssignment,
   getTaskAssignments,
@@ -143,4 +154,5 @@ export const assignmentService = {
   getAssignmentById,
   getDetailedAssignmentById,
   updateAssignment,
+  isUserOwner,
 };

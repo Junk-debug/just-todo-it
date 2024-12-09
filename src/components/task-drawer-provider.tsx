@@ -34,6 +34,7 @@ import {
 import { DialogProps } from '@radix-ui/react-dialog';
 import { EditTaskForm } from './edit-task-form';
 import { TaskDetails } from './task-details';
+import { QueryKey } from '@/lib/query-key';
 
 const TaskDrawerContext = createContext<{
   open: boolean;
@@ -165,7 +166,7 @@ function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
       }
       return undefined;
     },
-    queryKey: ['tasks', taskId],
+    queryKey: [QueryKey.TASKS, taskId],
   });
 
   const loading = isTaskLoading || isUserLoading;
