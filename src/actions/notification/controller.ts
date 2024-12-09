@@ -47,8 +47,10 @@ export const unsubscribeUser = requireAuth(
 
 export async function sendNotification({
   userId,
+  title,
   message,
 }: {
+  title: string;
   message: string;
   userId: User['id'];
 }) {
@@ -69,12 +71,13 @@ export async function sendNotification({
     };
 
     try {
+      console.log('Sending notification to:', sub);
       await webpush.sendNotification(
         subscription,
         JSON.stringify({
-          title: 'Test Notification',
+          title: title,
           body: message,
-          icon: '/icon.png',
+          icon: '/favicon.svg',
         }),
       );
     } catch (error) {
