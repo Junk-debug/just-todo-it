@@ -127,17 +127,19 @@ export default function AllPage() {
           />
         ))}
 
-        <AddTaskFlow
-          trigger={
-            <Button
-              size={'icon'}
-              className="fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] right-8 gap-1 size-12 rounded-lg"
-            >
-              <Plus className="!size-7" />
-            </Button>
-          }
-          defaultDueDate={new Date()}
-        />
+        {!isLoading && (
+          <AddTaskFlow
+            trigger={
+              <Button
+                size={'icon'}
+                className="fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] right-8 gap-1 size-12 rounded-lg"
+              >
+                <Plus className="!size-7" />
+              </Button>
+            }
+            defaultDueDate={new Date()}
+          />
+        )}
       </div>
     </>
   );
