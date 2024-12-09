@@ -61,6 +61,7 @@ export const shareTask = createServerAction(
       });
 
       await sendNotification({
+        url: process.env.AUTH_URL + '/home/inbox',
         userId: user.id,
         title: 'You have a new task assignment',
         message: `${owner.name} has shared a new task for you.`,

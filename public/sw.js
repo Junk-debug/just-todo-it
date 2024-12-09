@@ -21,9 +21,13 @@ self.addEventListener('push', function (event) {
 });
 
 self.addEventListener('notificationclick', function (event) {
-  console.log('Notification click received.');
+  const url = event.notification.data?.url;
+  console.log('Notification click received.', url);
+
+  // TODO: handle click event to open the url
+
   event.notification.close();
   event.waitUntil(
-    clients.openWindow('https://next-todo-app-three-alpha.vercel.app'),
+    clients.openWindow(url || 'https://next-todo-app-three-alpha.vercel.app'),
   );
 });

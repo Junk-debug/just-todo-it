@@ -49,10 +49,12 @@ export async function sendNotification({
   userId,
   title,
   message,
+  url,
 }: {
+  userId: User['id'];
   title: string;
   message: string;
-  userId: User['id'];
+  url: string;
 }) {
   const data = await subscriptionService.getUserSubscriptions(userId);
 
@@ -77,6 +79,7 @@ export async function sendNotification({
         JSON.stringify({
           title: title,
           body: message,
+          url,
           icon: '/favicon.svg',
         }),
       );
