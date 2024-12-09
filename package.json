@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev:https": "next dev --experimental-https",
     "email:dev": "email dev --dir src/actions/mail/templates",
     "build": "next build",
     "start": "next start",
