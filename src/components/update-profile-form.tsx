@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import ResetPasswordDrawer from './reset-password-drawer';
-import useUpdateUser from '@/hooks/use-update-user';
+import useUpdateUser from '@/hooks/user/use-update-user';
 
 type Props = ComponentProps<'form'> & {
   user: Pick<User, 'name' | 'email' | 'image'>;

@@ -13,7 +13,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { getDetailedTaskById } from '@/actions/task/controller';
 import { DetailedTask } from '@/actions/task/types';
-import useUserQuery from '@/hooks/use-user-query';
+import useUserQuery from '@/hooks/user/use-user-query';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 import {
@@ -34,7 +34,7 @@ import {
 import { DialogProps } from '@radix-ui/react-dialog';
 import { EditTaskForm } from './edit-task-form';
 import { TaskDetails } from './task-details';
-import { QueryKey } from '@/lib/query-key';
+import { taskKeys } from '@/hooks/task/task-keys';
 
 const TaskDrawerContext = createContext<{
   open: boolean;
@@ -166,7 +166,7 @@ function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
       }
       return undefined;
     },
-    queryKey: [QueryKey.TASKS, taskId],
+    queryKey: taskKeys.detail(taskId || ''),
   });
 
   const loading = isTaskLoading || isUserLoading;

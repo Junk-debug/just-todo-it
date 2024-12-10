@@ -11,7 +11,7 @@ import { DeleteTaskButton } from './delete-task-button';
 
 import { TaskRole, User } from '@prisma/client';
 import { useTaskDrawerData } from './task-drawer-provider';
-import useUpdateTaskMutation from '@/hooks/useUpdateTaskMutation';
+import useUpdateTask from '@/hooks/task/useUpdateTask';
 import { EditFormData, EditTaskForm } from './edit-task-form';
 import { ShareTaskFlow } from './share-task-flow';
 import { DetailedTask } from '@/actions/task/types';
@@ -29,7 +29,7 @@ export const TaskDetails = ({
   userId: User['id'];
 }) => {
   const { close } = useTaskDrawerData();
-  const { mutate } = useUpdateTaskMutation({
+  const { mutate } = useUpdateTask({
     onMutate: () => close(),
   });
 

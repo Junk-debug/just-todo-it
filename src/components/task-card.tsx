@@ -8,7 +8,7 @@ import { Task } from '@prisma/client';
 import { cn, formatDate, getPriorityColor } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
-import useUpdateTaskMutation from '@/hooks/useUpdateTaskMutation';
+import useUpdateTask from '@/hooks/task/useUpdateTask';
 import { UsersIcon } from 'lucide-react';
 
 export type TaskCardProps = React.HTMLAttributes<HTMLDivElement> & {
@@ -28,7 +28,7 @@ export const TaskCard = ({
 }: TaskCardProps) => {
   const router = useRouter();
 
-  const { mutate } = useUpdateTaskMutation();
+  const { mutate } = useUpdateTask();
 
   const onCheckedChange = async (value: boolean) => {
     mutate({ id, completed: value });

@@ -29,7 +29,7 @@ import {
 import { ChevronUp, LogOut, Plus, UserIcon } from 'lucide-react';
 import { useLogout } from '@/hooks/use-logout';
 import { Skeleton } from '@/components/ui/skeleton';
-import useUserQuery from '@/hooks/use-user-query';
+import useUserQuery from '@/hooks/user/use-user-query';
 import { AddTaskFlow } from '@/components/add-task-flow';
 import { NotificationsButton } from '@/components/notifications-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';

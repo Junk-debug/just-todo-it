@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 import { getDetailedNonOwnerAssignments } from '@/actions/assignment/controller';
 import { useQuery } from '@tanstack/react-query';
-import useUpdateAssignmentAcceptedStatusMutation from '@/hooks/useUpdateAssignmentAcceptedStatusMutation';
+import useUpdateAssignmentAcceptedStatus from '@/hooks/useUpdateAssignmentAcceptedStatus';
 import { DetailedAssignment } from '@/actions/assignment/service';
 import { Skeleton } from '@/components/ui/skeleton';
 import { QueryKey } from '@/lib/query-key';
@@ -56,7 +56,7 @@ export default function InboxPage() {
     queryKey: [QueryKey.ASSIGNMENTS],
   });
 
-  const { mutate } = useUpdateAssignmentAcceptedStatusMutation({
+  const { mutate } = useUpdateAssignmentAcceptedStatus({
     onSuccess({ accepted }) {
       toast.success(accepted ? 'Assignment accepted' : 'Assignment declined');
     },

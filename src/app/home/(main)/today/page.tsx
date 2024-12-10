@@ -7,14 +7,14 @@ import { TaskCard } from '@/components/task-card';
 
 import { filterTodayTasks, getFormattedDate } from '@/lib/utils';
 import { DetailedTask } from '@/actions/task/types';
-import useTasksQuery from '@/hooks/useTasksQuery';
+import useTasks from '@/hooks/task/useTasks';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 
 export default function MainPage() {
   const formattedToday = getFormattedDate(new Date());
 
-  const { data, isLoading } = useTasksQuery();
+  const { data, isLoading } = useTasks();
 
   const tasks = filterTodayTasks(data || []) as DetailedTask[];
 

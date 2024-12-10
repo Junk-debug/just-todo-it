@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import useTasksQuery from '@/hooks/useTasksQuery';
+import useTasks from '@/hooks/task/useTasks';
 import {
   SortOptions,
   filterUncompletedTasks,
@@ -68,7 +68,7 @@ export default function AllPage() {
   const [sort, setSort] = useState<SortOptions>(SortOptions.CREATED_ASC);
   const [showCompleted, setShowCompleted] = useState(false);
 
-  const { data, isLoading } = useTasksQuery();
+  const { data, isLoading } = useTasks();
 
   const tasks = (
     showCompleted

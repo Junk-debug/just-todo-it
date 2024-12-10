@@ -3,7 +3,7 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { DateSelect } from './date-select';
 
-import useAddTaskMutation from '@/hooks/useAddTaskMutation';
+import useAddTask from '@/hooks/task/useAddTask';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import {
@@ -39,7 +39,7 @@ export const AddTaskForm = ({
   // TODO: add hookform later maybe
   const [formData, setFormData] = useState<FormData>(defaultValues);
 
-  const { mutate } = useAddTaskMutation({
+  const { mutate } = useAddTask({
     onMutate: onMutate,
     onSettled: () => {
       setFormData(defaultValues);

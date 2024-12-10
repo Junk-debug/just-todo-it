@@ -11,12 +11,13 @@ import {
   UseMutationOptions,
 } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { taskKeys } from './task/task-keys';
 
 type TContext = {
   previousAssignments: DetailedAssignment[] | undefined;
 };
 
-type UseUpdateTaskMutationOptions = Omit<
+type UseUpdateAssignmentAcceptedStatusOptions = Omit<
   UseMutationOptions<
     DetailedAssignment,
     Error,
@@ -28,12 +29,12 @@ type UseUpdateTaskMutationOptions = Omit<
   onMutate?: (variables: UpdateAcceptedStatusDto) => void;
 };
 
-export default function useUpdateAssignmentAcceptedStatusMutation({
+export default function useUpdateAssignmentAcceptedStatus({
   onMutate,
   onError,
   onSettled,
   ...options
-}: UseUpdateTaskMutationOptions = {}) {
+}: UseUpdateAssignmentAcceptedStatusOptions = {}) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<
@@ -89,7 +90,7 @@ export default function useUpdateAssignmentAcceptedStatusMutation({
 
     onSettled: (data, error, variables, context) => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.ASSIGNMENTS] });
-      queryClient.invalidateQueries({ queryKey: [QueryKey.TASKS] });
+      queryClient.invalidateQueries({ queryKey: taskKeys.all });
 
       if (onSettled) {
         onSettled(data, error, variables, context);
