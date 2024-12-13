@@ -14,9 +14,12 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { routes } from './routes';
-import Link from 'next/link';
+
 import { useAssignments } from './tabs-layout';
+import Link from 'next/link';
+
 import { cn } from '@/lib/utils';
+
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -26,8 +29,9 @@ import {
 import { ChevronUp, LogOut, Plus, UserIcon } from 'lucide-react';
 import { useLogout } from '@/hooks/use-logout';
 import { Skeleton } from '@/components/ui/skeleton';
-import useUserQuery from '@/hooks/use-user-query';
+import useUserQuery from '@/hooks/user/use-user-query';
 import { AddTaskFlow } from '@/components/add-task-flow';
+import { NotificationsButton } from '@/components/notifications-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { usePathname } from 'next/navigation';
 
@@ -119,6 +123,9 @@ const Content = () => {
               ))}
           </SidebarMenu>
         </SidebarGroupContent>
+      </SidebarGroup>
+      <SidebarGroup>
+        <NotificationsButton />
       </SidebarGroup>
     </SidebarContent>
   );

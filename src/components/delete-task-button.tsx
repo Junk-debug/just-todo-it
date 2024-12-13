@@ -3,7 +3,7 @@ import ConfirmFlow from './confirm-flow';
 
 import { useState } from 'react';
 import { Task } from '@prisma/client';
-import useDeleteTaskMutation from '@/hooks/useDeleteTaskMutation';
+import useDeleteTask from '@/hooks/task/useDeleteTask';
 
 export const DeleteTaskButton = ({
   taskId,
@@ -14,7 +14,7 @@ export const DeleteTaskButton = ({
   onDelete?: () => void;
 }) => {
   const [open, setOpen] = useState(false);
-  const { mutate } = useDeleteTaskMutation({
+  const { mutate } = useDeleteTask({
     onMutate: () => {
       setOpen(false);
     },

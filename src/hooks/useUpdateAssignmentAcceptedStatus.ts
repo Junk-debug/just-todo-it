@@ -3,6 +3,7 @@ import {
   updateAssignmentAcceptedStatus,
 } from '@/actions/assignment/controller';
 import { DetailedAssignment } from '@/actions/assignment/service';
+import { QueryKey } from '@/lib/query-key';
 import { createServerActionHandler } from '@/lib/safe-action';
 import {
   useQueryClient,
@@ -10,12 +11,13 @@ import {
   UseMutationOptions,
 } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { taskKeys } from './task/task-keys';
 
 type TContext = {
   previousAssignments: DetailedAssignment[] | undefined;
 };
 
-type UseUpdateTaskMutationOptions = Omit<
+type UseUpdateAssignmentAcceptedStatusOptions = Omit<
   UseMutationOptions<
     DetailedAssignment,
     Error,
@@ -27,12 +29,12 @@ type UseUpdateTaskMutationOptions = Omit<
   onMutate?: (variables: UpdateAcceptedStatusDto) => void;
 };
 
-export default function useUpdateAssignmentAcceptedStatusMutation({
+export default function useUpdateAssignmentAcceptedStatus({
   onMutate,
   onError,
   onSettled,
   ...options
-}: UseUpdateTaskMutationOptions = {}) {
+}: UseUpdateAssignmentAcceptedStatusOptions = {}) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<
@@ -43,14 +45,14 @@ export default function useUpdateAssignmentAcceptedStatusMutation({
   >({
     mutationFn: createServerActionHandler(updateAssignmentAcceptedStatus),
     onMutate: async (newAssignmentData) => {
-      await queryClient.cancelQueries({ queryKey: ['assignments'] });
+      await queryClient.cancelQueries({ queryKey: [QueryKey.ASSIGNMENTS] });
 
       const previousAssignments = queryClient.getQueryData<
         DetailedAssignment[]
-      >(['assignments']);
+      >([QueryKey.ASSIGNMENTS]);
 
       queryClient.setQueryData<DetailedAssignment[]>(
-        ['assignments'],
+        [QueryKey.ASSIGNMENTS],
         (oldAssignments) => {
           if (!oldAssignments) {
             return oldAssignments;
@@ -73,7 +75,10 @@ export default function useUpdateAssignmentAcceptedStatusMutation({
 
     onError: (err, newAssignmentData, context) => {
       if (context?.previousAssignments) {
-        queryClient.setQueryData(['assignments'], context.previousAssignments);
+        queryClient.setQueryData(
+          [QueryKey.ASSIGNMENTS],
+          context.previousAssignments,
+        );
       }
 
       toast.error('Failed to update task');
@@ -84,8 +89,8 @@ export default function useUpdateAssignmentAcceptedStatusMutation({
     },
 
     onSettled: (data, error, variables, context) => {
-      queryClient.invalidateQueries({ queryKey: ['assignments'] });
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: [QueryKey.ASSIGNMENTS] });
+      queryClient.invalidateQueries({ queryKey: taskKeys.all });
 
       if (onSettled) {
         onSettled(data, error, variables, context);

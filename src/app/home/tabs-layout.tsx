@@ -7,11 +7,12 @@ import { getDetailedNonOwnerAssignments } from '@/actions/assignment/controller'
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { routes } from './routes';
+import { QueryKey } from '@/lib/query-key';
 
 export const useAssignments = () => {
   const { data: assignments, isLoading } = useQuery({
     queryFn: getDetailedNonOwnerAssignments,
-    queryKey: ['assignments'],
+    queryKey: [QueryKey.ASSIGNMENTS],
   });
 
   const acceptedAssignments = assignments?.filter(

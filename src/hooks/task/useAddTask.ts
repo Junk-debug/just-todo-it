@@ -9,6 +9,7 @@ import {
 } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
+import { taskKeys } from './task-keys';
 
 type Dto = Required<AddTaskDto>;
 
@@ -16,31 +17,31 @@ type TContext = {
   previousTasks: Task[] | undefined;
 };
 
-type UseAddTaskMutationOptions = Omit<
+type UseAddTaskOptions = Omit<
   UseMutationOptions<Task, Error, Dto, TContext>,
   'mutationFn' | 'onMutate'
 > & {
   onMutate?: (variables: Dto) => void;
 };
 
-export default function useAddTaskMutation({
+export default function useAddTask({
   onMutate,
   onError,
   onSuccess,
   onSettled,
   ...options
-}: UseAddTaskMutationOptions = {}) {
+}: UseAddTaskOptions = {}) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<Task, Error, Dto, TContext>({
     mutationFn: createServerActionHandler(addTask),
     onMutate: async (newTask) => {
-      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+      await queryClient.cancelQueries({ queryKey: taskKeys.all });
 
-      const previousTasks = queryClient.getQueryData<Task[]>(['tasks']);
-      queryClient.setQueryData<Task>(['tasks', newTask.id], newTask);
+      const previousTasks = queryClient.getQueryData<Task[]>(taskKeys.list());
+      queryClient.setQueryData<Task>(taskKeys.detail(newTask.id), newTask);
 
-      queryClient.setQueryData<Task[]>(['tasks'], (oldTasks) => {
+      queryClient.setQueryData<Task[]>(taskKeys.list(), (oldTasks) => {
         if (!oldTasks) {
           return oldTasks;
         }
@@ -56,7 +57,7 @@ export default function useAddTaskMutation({
     },
     onError: (error, variables, context) => {
       if (context?.previousTasks) {
-        queryClient.setQueryData(['tasks'], context.previousTasks);
+        queryClient.setQueryData(taskKeys.list(), context.previousTasks);
       }
 
       toast.error(error.message);
@@ -73,7 +74,7 @@ export default function useAddTaskMutation({
       }
     },
     onSettled: (data, error, variables, context) => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: taskKeys.all });
 
       if (onSettled) {
         onSettled(data, error, variables, context);
@@ -87,7 +88,7 @@ export default function useAddTaskMutation({
   ) => {
     const createdAt = new Date();
 
-    mutation.mutate({
+    return mutation.mutate({
       id: uuidv4(),
       completed: false,
       createdAt,
@@ -96,5 +97,19 @@ export default function useAddTaskMutation({
     });
   };
 
-  return { ...mutation, mutate };
+  const mutateAsync = (
+    data: Pick<AddTaskDto, 'title' | 'description' | 'dueDate' | 'priority'>,
+  ) => {
+    const createdAt = new Date();
+
+    return mutation.mutateAsync({
+      id: uuidv4(),
+      completed: false,
+      createdAt,
+      updatedAt: createdAt,
+      ...data,
+    });
+  };
+
+  return { ...mutation, mutate, mutateAsync };
 }

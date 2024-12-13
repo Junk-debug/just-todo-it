@@ -5,9 +5,11 @@ import { toast } from 'sonner';
 
 import { getDetailedNonOwnerAssignments } from '@/actions/assignment/controller';
 import { useQuery } from '@tanstack/react-query';
-import useUpdateAssignmentAcceptedStatusMutation from '@/hooks/useUpdateAssignmentAcceptedStatusMutation';
+import useUpdateAssignmentAcceptedStatus from '@/hooks/useUpdateAssignmentAcceptedStatus';
 import { DetailedAssignment } from '@/actions/assignment/service';
 import { Skeleton } from '@/components/ui/skeleton';
+import { QueryKey } from '@/lib/query-key';
+import { Button } from '@/components/ui/button';
 
 const AssignmentsList = ({
   assignments,
@@ -44,12 +46,17 @@ const AssignmentsList = ({
 };
 
 export default function InboxPage() {
-  const { data, isLoading, error } = useQuery({
+  const {
+    data,
+    isFetching: isLoading,
+    error,
+    refetch,
+  } = useQuery({
     queryFn: getDetailedNonOwnerAssignments,
-    queryKey: ['assignments'],
+    queryKey: [QueryKey.ASSIGNMENTS],
   });
 
-  const { mutate } = useUpdateAssignmentAcceptedStatusMutation({
+  const { mutate } = useUpdateAssignmentAcceptedStatus({
     onSuccess({ accepted }) {
       toast.success(accepted ? 'Assignment accepted' : 'Assignment declined');
     },
@@ -77,6 +84,9 @@ export default function InboxPage() {
         tasks that have been assigned to you. Please review the new assignments
         and take action as needed.
       </p>
+      <Button className="mb-4" onClick={() => refetch()} variant="outline">
+        Refetch
+      </Button>
       {isLoading && (
         <div className="flex flex-col gap-4">
           <Skeleton className="h-[8.75rem]" />
@@ -90,7 +100,7 @@ export default function InboxPage() {
             <h2 className="text-center mb-2">You have no assignments</h2>
           </div>
         )}
-      {newAssignments.length > 0 && (
+      {!isLoading && newAssignments.length > 0 && (
         <div className="mb-4">
           <h2 className="text-2xl font-semibold mb-2">New Assignments</h2>
           <AssignmentsList
@@ -100,7 +110,7 @@ export default function InboxPage() {
           />
         </div>
       )}
-      {reactedAssignments.length > 0 && (
+      {!isLoading && reactedAssignments.length > 0 && (
         <div>
           <h2 className="text-2xl font-semibold mb-2">Reacted Assignments</h2>
           <AssignmentsList

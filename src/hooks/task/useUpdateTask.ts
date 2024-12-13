@@ -8,40 +8,39 @@ import {
   UseMutationOptions,
 } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { taskKeys } from './task-keys';
 
 type TContext = {
   previousTasks: Task[] | undefined;
   previousTask: Task | undefined;
 };
 
-type UseUpdateTaskMutationOptions = Omit<
+type UseUpdateTaskOptions = Omit<
   UseMutationOptions<Task, Error, UpdateTaskDto, TContext>,
   'mutationFn' | 'onMutate'
 > & {
   onMutate?: (variables: UpdateTaskDto) => void;
 };
 
-export default function useUpdateTaskMutation({
+export default function useUpdateTask({
   onMutate,
   onError,
   onSettled,
   ...options
-}: UseUpdateTaskMutationOptions = {}) {
+}: UseUpdateTaskOptions = {}) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<Task, Error, UpdateTaskDto, TContext>({
     mutationFn: createServerActionHandler(updateTask),
     onMutate: async (newTask) => {
-      await queryClient.cancelQueries({ queryKey: ['tasks'] });
-      await queryClient.cancelQueries({ queryKey: ['tasks', newTask.id] });
+      await queryClient.cancelQueries({ queryKey: taskKeys.all });
 
-      const previousTasks = queryClient.getQueryData<Task[]>(['tasks']);
-      const previousTask = queryClient.getQueryData<Task>([
-        'tasks',
-        newTask.id,
-      ]);
+      const previousTasks = queryClient.getQueryData<Task[]>(taskKeys.list());
+      const previousTask = queryClient.getQueryData<Task>(
+        taskKeys.detail(newTask.id),
+      );
 
-      queryClient.setQueryData<Task>(['tasks', newTask.id], (oldTask) => {
+      queryClient.setQueryData<Task>(taskKeys.detail(newTask.id), (oldTask) => {
         if (!oldTask) {
           return oldTask;
         }
@@ -49,7 +48,7 @@ export default function useUpdateTaskMutation({
         return { ...oldTask, ...newTask };
       });
 
-      queryClient.setQueryData<Task[]>(['tasks'], (oldTasks) => {
+      queryClient.setQueryData<Task[]>(taskKeys.list(), (oldTasks) => {
         if (!oldTasks) {
           return oldTasks;
         }
@@ -67,12 +66,12 @@ export default function useUpdateTaskMutation({
     },
     onError: (error, variables, context) => {
       if (context?.previousTasks) {
-        queryClient.setQueryData(['tasks'], context.previousTasks);
+        queryClient.setQueryData(taskKeys.list(), context.previousTasks);
       }
 
       if (context?.previousTask) {
         queryClient.setQueryData(
-          ['tasks', context.previousTask.id],
+          taskKeys.detail(context.previousTask.id),
           context.previousTask,
         );
       }
@@ -84,8 +83,7 @@ export default function useUpdateTaskMutation({
       }
     },
     onSettled: (data, error, variables, context) => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['tasks', variables.id] });
+      queryClient.invalidateQueries({ queryKey: taskKeys.all });
 
       if (onSettled) {
         onSettled(data, error, variables, context);

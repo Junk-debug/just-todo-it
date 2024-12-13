@@ -1,6 +1,6 @@
 'use client';
 
-import useUserQuery from '@/hooks/use-user-query';
+import useUserQuery from '@/hooks/user/use-user-query';
 import { signOut } from 'next-auth/react';
 import { useEffect } from 'react';
 

@@ -10,40 +10,40 @@ import {
 
 import { toast } from 'sonner';
 import { createServerActionHandler } from '@/lib/safe-action';
+import { taskKeys } from './task-keys';
 
 type TContext = {
   previousTasks: Task[] | undefined;
   previousTask: Task | undefined;
 };
 
-type UseDeleteTaskMutationOptions = Omit<
+type UseDeleteTaskOptions = Omit<
   UseMutationOptions<Task, Error, DeleteTaskDto, TContext>,
   'mutationFn' | 'onMutate'
 > & {
   onMutate?: (data: DeleteTaskDto) => void;
 };
 
-export default function useDeleteTaskMutation({
+export default function useDeleteTask({
   onMutate,
   onError,
   onSuccess,
   onSettled,
   ...options
-}: UseDeleteTaskMutationOptions = {}) {
+}: UseDeleteTaskOptions = {}) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<Task, Error, DeleteTaskDto, TContext>({
     mutationFn: createServerActionHandler(deleteTask),
     onMutate: async (data) => {
       const { id } = data;
-      await queryClient.cancelQueries({ queryKey: ['tasks'] });
-      await queryClient.cancelQueries({ queryKey: ['tasks', id] });
+      await queryClient.cancelQueries({ queryKey: taskKeys.all });
 
-      const previousTasks = queryClient.getQueryData<Task[]>(['tasks']);
-      const previousTask = queryClient.getQueryData<Task>(['tasks', id]);
+      const previousTask = queryClient.getQueryData<Task>(taskKeys.detail(id));
+      const previousTasks = queryClient.getQueryData<Task[]>(taskKeys.list());
 
-      queryClient.setQueryData<Task>(['tasks', id], undefined);
-      queryClient.setQueryData<Task[]>(['tasks'], (oldTasks) => {
+      queryClient.setQueryData<Task>(taskKeys.detail(id), undefined);
+      queryClient.setQueryData<Task[]>(taskKeys.list(), (oldTasks) => {
         if (!oldTasks) {
           return oldTasks;
         }
@@ -59,12 +59,12 @@ export default function useDeleteTaskMutation({
     },
     onError: (error, variables, context) => {
       if (context?.previousTasks) {
-        queryClient.setQueryData(['tasks'], context.previousTasks);
+        queryClient.setQueryData(taskKeys.list(), context.previousTasks);
       }
 
       if (context?.previousTask) {
         queryClient.setQueryData(
-          ['tasks', context.previousTask.id],
+          taskKeys.detail(context.previousTask.id),
           context.previousTask,
         );
       }
@@ -83,8 +83,7 @@ export default function useDeleteTaskMutation({
       }
     },
     onSettled: (data, error, variables, context) => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['tasks', variables.id] });
+      queryClient.invalidateQueries({ queryKey: taskKeys.all });
 
       if (onSettled) {
         onSettled(data, error, variables, context);

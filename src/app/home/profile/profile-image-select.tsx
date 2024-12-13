@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import useUpdateUser from '@/hooks/use-update-user';
+import useUpdateUser from '@/hooks/user/use-update-user';
 import { User } from '@prisma/client';
 import { toast } from 'sonner';
 import { z } from 'zod';
